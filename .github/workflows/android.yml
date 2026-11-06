@@ -26,6 +26,8 @@ jobs:
         run: |
           keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore $HOME/debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999 -deststoretype pkcs12
           cd smash2d
+          grep -q import_etc project.godot || sed -i 's|^quality/driver/driver_name="GLES2"|quality/driver/driver_name="GLES2"\nvram_compression/import_etc=true\nvram_compression/import_etc2=true|' project.godot
+          grep -n -A3 '^\[rendering\]' project.godot
           godot --path . --editor --quit --headless || true
           cat > ~/.config/godot/editor_settings-3.tres <<EOF
           [gd_resource type="EditorSettings" format=2]
@@ -47,4 +49,3 @@ jobs:
         with:
           name: Smash2D-apk
           path: smash2d/build/android/Smash2D.apk
-          
