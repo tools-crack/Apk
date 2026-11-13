@@ -11,7 +11,14 @@ jobs:
           distribution: temurin
           java-version: "11"
       - name: Descomprimir
-        run: unzip -q smash2d.zip
+        run: |
+          # Funciona aunque el zip tenga la carpeta smash2d/ o los archivos sueltos en la raíz; -o no pregunta nada.
+          mkdir -p proj_tmp
+          unzip -oq smash2d.zip -d proj_tmp
+          P=$(dirname "$(find proj_tmp -maxdepth 3 -name project.godot | head -1)")
+          test -f "$P/project.godot" || { echo "No encuentro project.godot dentro de smash2d.zip"; exit 1; }
+          mv "$P" smash2d
+          ls smash2d | head -30
       - name: Instalar Godot y plantillas
         run: |
           V=3.5.3-stable
